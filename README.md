@@ -1,4 +1,7 @@
-# FastSpeech 2 - PyTorch Implementation
+
+
+
+# A CLONE OF [ming024 Github](https://github.com/ming024/FastSpeech2). I will try to complete Vietnamese Version (vlsp dataset). 
 
 This is a PyTorch implementation of Microsoft's text-to-speech system [**FastSpeech 2: Fast and High-Quality End-to-End Text to Speech**](https://arxiv.org/abs/2006.04558v1). 
 This project is based on [xcmyz's implementation](https://github.com/xcmyz/FastSpeech) of FastSpeech. Feel free to use/modify the code.
