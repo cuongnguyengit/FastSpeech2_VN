@@ -1,10 +1,10 @@
-dataset: "vlsp2020"
+dataset: "MyData"
 
 path:
-  corpus_path: "/content/vlsp2020/"
-  lexicon_path: "lexicon/librispeech-lexicon.txt"
-  raw_path: "/content/vlsp2020/indir/"
-  preprocessed_path: "/content/vlsp2020/outdir/"
+  corpus_path: ""
+  lexicon_path: ""
+  raw_path: "/workspaceVoiceData/Vi/MyData/indir/"
+  preprocessed_path: "/workspaceVoiceData/Vi/MyData/outdir/"
 
 preprocessing:
   val_size: 512

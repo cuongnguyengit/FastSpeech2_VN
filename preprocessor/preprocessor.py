@@ -66,16 +66,18 @@ class Preprocessor:
         speakers = {}
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
             speakers[speaker] = i
+            dem = 0
             for wav_name in os.listdir(os.path.join(self.in_dir, speaker)):
                 if ".wav" not in wav_name:
                     continue
-
-                basename = wav_name.split(".")[0]
+                # print(wav_name)
+                basename = wav_name[:-4]
                 tg_path = os.path.join(
-                    self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
+                    self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename.replace('_', '-'))
                 )
+                # print(tg_path, os.path.exists(tg_path))
                 if os.path.exists(tg_path):
-                    ret = self.process_utterance(speaker, basename)
+                    ret = self.process_utterance(speaker, basename, tg_path)
                     if ret is None:
                         continue
                     else:
@@ -88,6 +90,9 @@ class Preprocessor:
                             energy_scaler.partial_fit(energy.reshape((-1, 1)))
 
                         n_frames += n
+                        dem += 1
+                        if dem % 100 == 0:
+                            print(dem)
 
         print("Computing statistic quantities ...")
         # Perform normalization if necessary
@@ -152,12 +157,12 @@ class Preprocessor:
 
         return out
 
-    def process_utterance(self, speaker, basename):
+    def process_utterance(self, speaker, basename, tg_path):
         wav_path = os.path.join(self.in_dir, speaker, "{}.wav".format(basename))
         text_path = os.path.join(self.in_dir, speaker, "{}.txt".format(basename))
-        tg_path = os.path.join(
-            self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
-        )
+        # tg_path = os.path.join(
+        #     self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
+        # )
 
         # Get alignments
         textgrid = tgt.io.read_textgrid(tg_path)
@@ -192,8 +197,10 @@ class Preprocessor:
         ].astype(np.float32)
 
         # Read raw text
-        with open(text_path, "r") as f:
+        with open(text_path, "r", encoding='utf-8') as f:
             raw_text = f.readline().strip("\n")
+            if '.wav|' in raw_text:
+                raw_text = raw_text.split('|')[-1]
 
         # Compute fundamental frequency
         pitch, t = pw.dio(
