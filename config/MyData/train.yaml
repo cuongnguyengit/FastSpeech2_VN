@@ -1,9 +1,9 @@
 path:
-  ckpt_path: "/workspace/multi_fs2/ckpt/"
-  log_path: "/workspace/multi_fs2/log/"
-  result_path: "/workspace/multi_fs2/result/"
+  ckpt_path: "/content/drive/MyDrive/voice_data/multi_fs2/ckpt/"
+  log_path: "/content/drive/MyDrive/voice_data/multi_fs2/log/"
+  result_path: "/content/drive/MyDrive/voice_data/multi_fs2/result/"
 optimizer:
-  batch_size: 16
+  batch_size: 32
   betas: [0.9, 0.98]
   eps: 0.000000001
   weight_decay: 0.0

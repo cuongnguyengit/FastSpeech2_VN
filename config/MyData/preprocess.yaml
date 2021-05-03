@@ -3,8 +3,8 @@ dataset: "MyData"
 path:
   corpus_path: ""
   lexicon_path: ""
-  raw_path: "/workspace/VoiceData/Vi/MyData/indir/"
-  preprocessed_path: "/workspace/VoiceData/Vi/MyData/outdir/"
+  raw_path: "/content/MyData/indir/"
+  preprocessed_path: "/content/MyData/outdir/"
 
 preprocessing:
   val_size: 512
