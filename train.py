@@ -206,7 +206,7 @@ def main(args, configs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--restore_step", type=int, default=0)
+    # parser.add_argument("--restore_step", type=int, default=0)
     parser.add_argument(
         "-p",
         "--preprocess_config",
