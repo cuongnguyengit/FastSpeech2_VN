@@ -286,8 +286,6 @@ class Preprocessor:
         end_time = 0
         end_idx = 0
 
-        last_time = 0
-
         for t in tier._objects:
             s, e, p = t.start_time, t.end_time, t.text
 
@@ -306,15 +304,14 @@ class Preprocessor:
             else:
                 # For silent phones
                 # phones.append(p)
-                if s - last_time >= 0.27:
+                if e - s >= 0.27:
                     phones.append('!')
-                elif s - last_time >= 0.21:
+                elif e - s >= 0.21:
                     phones.append('?')
-                elif s - last_time >= 0.15:
+                elif e - s >= 0.15:
                     phones.append(';')
-                elif s - last_time >= 0.12:
+                else:
                     phones.append(',')
-            last_time = t.end_time
 
             durations.append(
                 int(
