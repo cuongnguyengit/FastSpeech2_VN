@@ -16,7 +16,7 @@ from text import text_to_sequence
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
+print(device)
 def read_lexicon(lex_path):
     lexicon = {}
     with open(lex_path) as f:
@@ -84,6 +84,19 @@ def preprocess_mandarin(text, preprocess_config):
     return np.array(sequence)
 
 
+def preprocess_vi(text, preprocess_config):
+    text = re.sub(r",|\.|:|\?", "{sp}", text)
+    phones = ''.join(text.split())
+    print("Raw Text Sequence: {}".format(text))
+    print("Phoneme Sequence: {}".format(phones))
+    sequence = np.array(
+        text_to_sequence(
+            phones, preprocess_config["preprocessing"]["text"]["text_cleaners"]
+        )
+    )
+    return np.array(sequence)
+
+
 def synthesize(model, step, configs, vocoder, batchs, control_values):
     preprocess_config, model_config, train_config = configs
     pitch_control, energy_control, duration_control = control_values
@@ -111,12 +124,13 @@ def synthesize(model, step, configs, vocoder, batchs, control_values):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--restore_step", type=int, required=True)
+    parser.add_argument("--restore_step", type=int, default=130000)
     parser.add_argument(
         "--mode",
         type=str,
         choices=["batch", "single"],
-        required=True,
+        # required=True,
+        default="single",
         help="Synthesize a whole dataset or a single sentence",
     )
     parser.add_argument(
@@ -128,7 +142,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--text",
         type=str,
-        default=None,
+        default="xin chào tất cả chúng mày",
         help="raw text to synthesize, for single-sentence mode only",
     )
     parser.add_argument(
@@ -141,14 +155,25 @@ if __name__ == "__main__":
         "-p",
         "--preprocess_config",
         type=str,
-        required=True,
+        # required=True,
+        default="config/MyData/preprocess.yaml",
         help="path to preprocess.yaml",
     )
     parser.add_argument(
-        "-m", "--model_config", type=str, required=True, help="path to model.yaml"
+        "-m",
+        "--model_config",
+        type=str,
+        # required=True,
+        default="config/MyData/model.yaml",
+        help="path to model.yaml"
     )
     parser.add_argument(
-        "-t", "--train_config", type=str, required=True, help="path to train.yaml"
+        "-t",
+        "--train_config",
+        type=str,
+        # required=True,
+        default="config/MyData/train.yaml",
+        help="path to train.yaml"
     )
     parser.add_argument(
         "--pitch_control",
@@ -206,6 +231,8 @@ if __name__ == "__main__":
             texts = np.array([preprocess_english(args.text, preprocess_config)])
         elif preprocess_config["preprocessing"]["text"]["language"] == "zh":
             texts = np.array([preprocess_mandarin(args.text, preprocess_config)])
+        elif preprocess_config["preprocessing"]["text"]["language"] == "vi":
+            texts = np.array([preprocess_vi(args.text, preprocess_config)])
         text_lens = np.array([len(texts[0])])
         batchs = [(ids, raw_texts, speakers, texts, text_lens, max(text_lens))]
 

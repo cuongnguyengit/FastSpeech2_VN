@@ -1,9 +1,9 @@
 path:
-  ckpt_path: "./output/ckpt/vlsp2020"
-  log_path: "./output/log/vlsp2020"
-  result_path: "./output/result/vlsp2020"
+  ckpt_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/ckpt/"
+  log_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/log/"
+  result_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/result/"
 optimizer:
-  batch_size: 48
+  batch_size: 32
   betas: [0.9, 0.98]
   eps: 0.000000001
   weight_decay: 0.0
@@ -13,8 +13,8 @@ optimizer:
   anneal_steps: []
   anneal_rate: 1.0
 step:
-  total_step: 160000
-  log_step: 100
-  synth_step: 1000
-  val_step: 1000
-  save_step: 10000
+  total_step: 900000
+  log_step: 1000
+  synth_step: 10000
+  val_step: 10000
+  save_step: 20000
