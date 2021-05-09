@@ -311,7 +311,7 @@ class Preprocessor:
                     phones.append(';')
                 elif s - last_time >= 0.12:
                     phones.append(',')
-                last_time = t.end_time
+            last_time = t.end_time
 
             durations.append(
                 int(
