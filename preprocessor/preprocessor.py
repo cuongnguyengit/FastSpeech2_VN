@@ -149,10 +149,15 @@ class Preprocessor:
 
         # Write metadata
         with open(os.path.join(self.out_dir, "train.txt"), "w", encoding="utf-8") as f:
-            for m in out[self.val_size :]:
+            for m in out[self.val_size:]:
                 f.write(m + "\n")
+
         with open(os.path.join(self.out_dir, "val.txt"), "w", encoding="utf-8") as f:
             for m in out[: self.val_size]:
+                f.write(m + "\n")
+
+        with open(os.path.join(self.out_dir, "full.txt"), "w", encoding="utf-8") as f:
+            for m in out:
                 f.write(m + "\n")
 
         return out
@@ -174,14 +179,12 @@ class Preprocessor:
 
         list_text = []
         for i in phone:
-            if i in _silences:
-                list_text.append('{' + i + '}')
-            elif i == '$':
+            if i == '$':
                 list_text.append(' ')
             else:
                 list_text.append(i)
         text = ''.join(list_text)
-        text = text.replace('}{', ' ')  # '{A B} {C}'
+        # text = text.replace('}{', ' ')  # '{A B} {C}'
 
         if start >= end:
             return None
