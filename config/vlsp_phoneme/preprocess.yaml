@@ -1,16 +1,16 @@
-dataset: "LJSpeech_paper"
+dataset: "vlsp"
 
 path:
-  corpus_path: "/home/ming/Data/LJSpeech-1.1"
-  lexicon_path: "lexicon/librispeech-lexicon.txt"
-  raw_path: "./raw_data/LJSpeech"
-  preprocessed_path: "./preprocessed_data/LJSpeech_paper"
+  corpus_path: ""
+  lexicon_path: ""
+  raw_path: "/content/vlsp2020/wavs/"
+  preprocessed_path: "/content/vlsp2020/outdir/"
 
 preprocessing:
   val_size: 512
   text:
-    text_cleaners: ["english_cleaners"]
-    language: "en"
+    text_cleaners: ["basic_cleaners"]
+    language: "vi"
   audio:
     sampling_rate: 22050
     max_wav_value: 32768.0
