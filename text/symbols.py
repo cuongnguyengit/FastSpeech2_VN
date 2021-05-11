@@ -19,5 +19,5 @@ def get_symbols(name):
         symbols      = [_pad] + list(_special) + list(_punctuation) + list(_letters) + _silences
     elif name == 'phoneme':
         _punctuation = ' !,.;?'
-        symbols = list(_punctuation) + list_phones
+        symbols = list(_punctuation) + ['@' + i for i in list_phones]
     return symbols

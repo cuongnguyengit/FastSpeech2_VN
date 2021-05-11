@@ -19,8 +19,8 @@ class Dataset(Dataset):
         self.cleaners = preprocess_config["preprocessing"]["text"]["text_cleaners"]
         self.batch_size = train_config["optimizer"]["batch_size"]
 
-        ct = CustomText(model_config['level'])
-        getattr(self, 'text_to_sequence', ct.text_to_sequence)
+        self.ct = CustomText(model_config['level'])
+        # getattr(self, 'text_to_sequence', ct.text_to_sequence)
 
         self.basename, self.speaker, self.text, self.raw_text = self.process_meta(
             filename
@@ -38,7 +38,7 @@ class Dataset(Dataset):
         speaker = self.speaker[idx]
         speaker_id = self.speaker_map[speaker]
         raw_text = self.raw_text[idx]
-        phone = np.array(self.text_to_sequence(self.text[idx], self.cleaners))
+        phone = np.array(self.ct.text_to_sequence(self.text[idx], self.cleaners))
         mel_path = os.path.join(
             self.preprocessed_path,
             "mel",

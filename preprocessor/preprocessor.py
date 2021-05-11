@@ -174,24 +174,15 @@ class Preprocessor:
         phone, duration, start, end = self.get_alignment(
             textgrid.get_tier_by_name("phones")
         )
-        # text = "{" + " ".join(phone) + "}"
-        _silences = ["sp", "spn", "sil"]
-
-        list_text = []
-        for i in phone:
-            if i == '$':
-                list_text.append(' ')
-            else:
-                list_text.append(i)
-        text = ''.join(list_text)
-        # text = text.replace('}{', ' ')  # '{A B} {C}'
+        text =  "".join(phone)
+        text = text.replace('}{', ' ')  # '{A B} {C}'
 
         if start >= end:
             return None
 
-        if len(list_text) != len(phone):
-            print(f'{basename} gen phone failed')
-            return None
+        # if len(list_text) != len(phone):
+        #     print(f'{basename} gen phone failed')
+        #     return None
 
         # Read and trim wav files
         wav, _ = librosa.load(wav_path)
@@ -200,10 +191,13 @@ class Preprocessor:
         ].astype(np.float32)
 
         # Read raw text
-        with open(text_path, "r", encoding='utf-8') as f:
-            raw_text = f.readline().strip("\n")
-            if '.wav|' in raw_text:
-                raw_text = raw_text.split('|')[-1]
+        try:
+            with open(text_path, "r", encoding='utf-8') as f:
+                raw_text = f.readline().strip("\n")
+                if '.wav|' in raw_text:
+                    raw_text = raw_text.split('|')[-1]
+        except:
+            return None
 
         # Compute fundamental frequency
         pitch, t = pw.dio(
@@ -298,7 +292,7 @@ class Preprocessor:
 
             if p not in sil_phones:
                 # For ordinary phones
-                phones.append(p)
+                phones.append('{'+p+'}')
                 end_time = e
                 end_idx = len(phones)
             else:

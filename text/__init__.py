@@ -8,8 +8,8 @@ class CustomText:
     def __init__(self, symbol_name):
         self.symbols = get_symbols(symbol_name)
         # Mappings from symbol to numeric ID and vice versa:
-        self._symbol_to_id = {s: i for i, s in enumerate(symbols)}
-        self._id_to_symbol = {i: s for i, s in enumerate(symbols)}
+        self._symbol_to_id = {s: i for i, s in enumerate(self.symbols)}
+        self._id_to_symbol = {i: s for i, s in enumerate(self.symbols)}
 
         # Regular expression matching text enclosed in curly braces:
         self._curly_re = re.compile(r"(.*?)\{(.+?)\}(.*)")
