@@ -1,7 +1,7 @@
 path:
-  ckpt_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/ckpt/"
-  log_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/log/"
-  result_path: "/content/drive/MyDrive/voice_data/new_vlsp_fs2/result/"
+  ckpt_path: "/content/drive/MyDrive/voice_data/phoneme_vlsp_fs2/ckpt/"
+  log_path: "/content/drive/MyDrive/voice_data/phoneme_vlsp_fs2/log/"
+  result_path: "/content/drive/MyDrive/voice_data/phoneme_vlsp_fs2/result/"
 optimizer:
   batch_size: 32
   betas: [0.9, 0.98]
