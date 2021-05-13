@@ -45,10 +45,8 @@ def main(args, configs):
     print("Number of FastSpeech2 Parameters:", num_param)
 
     # Load checkpoint if exists
-    checkpoint_path = os.path.join(args.restore_path)
-
-    if os.path.isfile(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path)
+    if args.restore_path is not None and os.path.isfile(args.restore_path):
+        checkpoint = torch.load(args.restore_path)
         pretrained_dict = checkpoint['model']
         dem1 = 0
         dem2 = 0
@@ -216,7 +214,7 @@ if __name__ == "__main__":
         "-t", "--train_config", type=str, required=True, help="path to train.yaml"
     )
     parser.add_argument("-s", '--restore_step', type=int, default=0)
-    parser.add_argument("-c", '--restore_path', type=str, default='')
+    parser.add_argument("-c", '--restore_path', type=str, default=None)
 
     args = parser.parse_args()
 
