@@ -48,9 +48,9 @@ def main(args, configs):
     if args.restore_path is not None and os.path.isfile(args.restore_path):
         checkpoint = torch.load(args.restore_path)
         pretrained_dict = checkpoint['model']
-        if any(key.startswith('module.') for key in pretrained_dict):
-            pretrained_dict = {k.replace('module.', ''): v for k, v in pretrained_dict.items()}
-        model.load_state_dict(pretrained_dict)
+        if not any(key.startswith('module.') for key in pretrained_dict):
+            pretrained_dict = {'module.' + k: v for k, v in pretrained_dict.items()}
+
         dem1 = 0
         dem2 = 0
         model_dict = model.state_dict()
