@@ -70,7 +70,7 @@ def main(args, configs):
         model_dict.update(pretrained_dict)
         # 3. load the new state dict
         model.load_state_dict(model_dict)
-        model.load_state_dict(checkpoint['model'])
+        # model.load_state_dict(checkpoint['model'])
         # optimizer.load_state_dict(checkpoint['optimizer'])
         print("\n---Model Restored at Step {}---\n".format(args.restore_step))
 
