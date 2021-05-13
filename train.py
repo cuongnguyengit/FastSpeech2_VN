@@ -45,38 +45,33 @@ def main(args, configs):
     print("Number of FastSpeech2 Parameters:", num_param)
 
     # Load checkpoint if exists
-    # checkpoint_path = os.path.join(args.restore_path)
-    # try:
-    #     checkpoint = torch.load(os.path.join(
-    #         checkpoint_path, '{}.pth.tar'.format(args.restore_step)))
-    #     # if 'LJSpeech' in checkpoint_path:
-    #     if True:
-    #         pretrained_dict = checkpoint['model']
-    #         dem1 = 0
-    #         dem2 = 0
-    #         model_dict = model.state_dict()
-    #         for k, v in pretrained_dict.items():
-    #             if k in model_dict and v.size() == model_dict[k].size():
-    #                 # print('Load weight in ', k)
-    #                 dem1 += 1
-    #             else:
-    #                 print(f'Module {k} is not same size')
-    #                 dem2 += 1
-    #         dem2 += dem1
-    #         print(f'### Load {dem1}/{dem2} modules')
-    #         # 1. filter out unnecessary keys
-    #         pretrained_dict = {k: v for k, v in pretrained_dict.items() if
-    #                            k in model_dict and v.size() == model_dict[k].size()}
-    #         # 2. overwrite entries in the existing state dict
-    #         model_dict.update(pretrained_dict)
-    #         # 3. load the new state dict
-    #         model.load_state_dict(model_dict)
-    #         model.load_state_dict(checkpoint['model'])
-    #         optimizer.load_state_dict(checkpoint['optimizer'])
-    #     print("\n---Model Restored at Step {}---\n".format(args.restore_step))
-    # except Exception as e:
-    #     print(e)
-    #     print("\n---Start New Training---\n")
+    checkpoint_path = os.path.join(args.restore_path)
+
+    if os.path.isfile(checkpoint_path):
+        checkpoint = torch.load(checkpoint_path)
+        pretrained_dict = checkpoint['model']
+        dem1 = 0
+        dem2 = 0
+        model_dict = model.state_dict()
+        for k, v in pretrained_dict.items():
+            if k in model_dict and v.size() == model_dict[k].size():
+                # print('Load weight in ', k)
+                dem1 += 1
+            else:
+                print(f'Module {k} is not same size')
+                dem2 += 1
+        dem2 += dem1
+        print(f'### Load {dem1}/{dem2} modules')
+        # 1. filter out unnecessary keys
+        pretrained_dict = {k: v for k, v in pretrained_dict.items() if
+                           k in model_dict and v.size() == model_dict[k].size()}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(pretrained_dict)
+        # 3. load the new state dict
+        model.load_state_dict(model_dict)
+        model.load_state_dict(checkpoint['model'])
+        # optimizer.load_state_dict(checkpoint['optimizer'])
+        print("\n---Model Restored at Step {}---\n".format(args.restore_step))
 
 
     # Load vocoder
