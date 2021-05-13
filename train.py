@@ -49,7 +49,7 @@ def main(args, configs):
         checkpoint = torch.load(args.restore_path)
         pretrained_dict = checkpoint['model']
         if not any(key.startswith('module.') for key in pretrained_dict):
-            sd = {'module.' + k: v for k, v in pretrained_dictitems()}
+            pretrained_dict = {'module.' + k: v for k, v in pretrained_dict.items()}
         model.load_state_dict(pretrained_dict)
         dem1 = 0
         dem2 = 0
