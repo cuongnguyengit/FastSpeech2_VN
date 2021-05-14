@@ -40,7 +40,8 @@ def evaluate(model, step, configs, logger=None, vocoder=None):
             batch = to_device(batch, device)
             with torch.no_grad():
                 # Forward
-                output = model(*(batch[2:6]))
+                output = model(*(batch[2:]))
+                output_preidiction = model(*(batch[2:6]))
 
                 # Cal Loss
                 losses = Loss(batch, output)
@@ -57,7 +58,7 @@ def evaluate(model, step, configs, logger=None, vocoder=None):
     if logger is not None:
         fig, wav_reconstruction, wav_prediction, tag = synth_one_sample(
             batch,
-            output,
+            output_preidiction,
             vocoder,
             model_config,
             preprocess_config,

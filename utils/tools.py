@@ -117,13 +117,19 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
     if preprocess_config["preprocessing"]["pitch"]["feature"] == "phoneme_level":
         pitch = targets[9][0, :src_len].detach().cpu().numpy()
         pitch = expand(pitch, duration)
+        pitch_prediction = predictions[2][0, :mel_len].detach().cpu().numpy()
+        pitch_prediction = expand(pitch_prediction, duration)
     else:
         pitch = targets[9][0, :mel_len].detach().cpu().numpy()
+        pitch_prediction = predictions[2][0, :mel_len].detach().cpu().numpy()
     if preprocess_config["preprocessing"]["energy"]["feature"] == "phoneme_level":
         energy = targets[10][0, :src_len].detach().cpu().numpy()
         energy = expand(energy, duration)
+        energy_prediction = predictions[3][0, :mel_len].detach().cpu().numpy()
+        energy_prediction = expand(energy_prediction, duration)
     else:
         energy = targets[10][0, :mel_len].detach().cpu().numpy()
+        energy_prediction = predictions[3][0, :mel_len].detach().cpu().numpy()
 
     with open(
         os.path.join(preprocess_config["path"]["preprocessed_path"], "stats.json")
@@ -133,7 +139,7 @@ def synth_one_sample(targets, predictions, vocoder, model_config, preprocess_con
 
     fig = plot_mel(
         [
-            (mel_prediction.cpu().numpy(), pitch, energy),
+            (mel_prediction.cpu().numpy(), pitch_prediction, energy_prediction),
             (mel_target.cpu().numpy(), pitch, energy),
         ],
         stats,

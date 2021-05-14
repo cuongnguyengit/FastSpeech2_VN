@@ -142,9 +142,10 @@ def main(args, configs):
                     log(train_logger, step, losses=losses)
 
                 if step % synth_step == 0:
+                    output_preidiction = model(*(batch[2:6]))
                     fig, wav_reconstruction, wav_prediction, tag = synth_one_sample(
                         batch,
-                        output,
+                        output_preidiction,
                         vocoder,
                         model_config,
                         preprocess_config,
