@@ -184,7 +184,7 @@ class Preprocessor:
             return None
 
         if insert_space:
-            phone, duration = insert_space_text(word, phone, duration, Z=len(list_z_p) > 0)
+            phone, duration = self.insert_space_text(word, phone, duration, Z=len(list_z_p) > 0)
 
             if phone is None:
                 print(f'\t{basename} is inserted un')
