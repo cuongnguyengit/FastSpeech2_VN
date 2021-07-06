@@ -162,7 +162,7 @@ class Preprocessor:
 
         return out
 
-    def process_utterance(self, speaker, basename, tg_path):
+    def process_utterance(self, speaker, basename, tg_path, insert_space=True):
         wav_path = os.path.join(self.in_dir, speaker, "{}.wav".format(basename))
         text_path = os.path.join(self.in_dir, speaker, "{}.txt".format(basename))
         # tg_path = os.path.join(
@@ -171,18 +171,35 @@ class Preprocessor:
 
         # Get alignments
         textgrid = tgt.io.read_textgrid(tg_path)
-        phone, duration, start, end = self.get_alignment(
-            textgrid.get_tier_by_name("phones")
-        )
-        text =  "".join(phone)
-        text = text.replace('}{', ' ')  # '{A B} {C}'
+        word, _, _, _, list_z_w = self.get_alignment(textgrid.get_tier_by_name('words'))
 
-        if start >= end:
+        if '<unk>' in word:
+            print(f'\t{basename} contains <unk> word in text')
             return None
 
-        # if len(list_text) != len(phone):
-        #     print(f'{basename} gen phone failed')
-        #     return None
+        phone, duration, start, end, list_z_p = self.get_alignment(textgrid.get_tier_by_name('phones'))
+
+        if phone is None:
+            print(f'\t{basename} contains $ char in phones')
+            return None
+
+        if insert_space:
+            phone, duration = insert_space_text(word, phone, duration, Z=len(list_z_p) > 0)
+
+            if phone is None:
+                print(f'\t{basename} is inserted un')
+                return None
+
+        duration = duration[:len(phone)]
+        text = ''.join(phone)
+
+        if start >= end:
+            print(f'\t{basename}.TextGrid was extracted by a wrong wav file !!!')
+            return None
+
+        if len(duration) != len(phone):
+            print(f'\t{basename} gen phone failed')
+            return None
 
         # Read and trim wav files
         wav, _ = librosa.load(wav_path)
@@ -272,53 +289,109 @@ class Preprocessor:
         )
 
     def get_alignment(self, tier):
-        sil_phones = ["sil", "sp", "spn"]
+        sil_phones = ['sil', 'sp', 'spn']
 
         phones = []
         durations = []
         start_time = 0
         end_time = 0
         end_idx = 0
-
+        flag = False
+        list_z = []
         for t in tier._objects:
             s, e, p = t.start_time, t.end_time, t.text
 
-            # Trim leading silences
+            # Trimming leading silences
             if phones == []:
                 if p in sil_phones:
                     continue
                 else:
                     start_time = s
-
+            if p == '$':
+                flag = True
+                break
             if p not in sil_phones:
-                # For ordinary phones
-                phones.append('{'+p+'}')
+                if p == 'z':
+                    list_z.append(e - s)
+                    phones.append(' ')
+                else:
+                    phones.append(p)
                 end_time = e
                 end_idx = len(phones)
             else:
-                # For silent phones
-                # phones.append(p)
-                if e - s >= 0.27:
-                    phones.append('!')
-                elif e - s >= 0.21:
+                # if e - s > 0.45:
+                #     phones.append('?')
+                # elif e - s > 0.3:
+                #     phones.append('!')
+                # elif e - s > 0.15:
+                #     phones.append(',')
+                # else:
+                #     phones.append(';')
+                if e - s > 0.3:
                     phones.append('?')
-                elif e - s >= 0.15:
-                    phones.append(';')
                 else:
                     phones.append(',')
+            durations.append(int(np.round(
+                e * hp.sampling_rate / hp.hop_length) - np.round(s * hp.sampling_rate / hp.hop_length)))
 
-            durations.append(
-                int(
-                    np.round(e * self.sampling_rate / self.hop_length)
-                    - np.round(s * self.sampling_rate / self.hop_length)
-                )
-            )
+        if flag:
+            return None, None, None, None
 
-        # Trim tailing silences
+        # Trimming tailing silences
         phones = phones[:end_idx]
         durations = durations[:end_idx]
 
-        return phones, durations, start_time, end_time
+        return phones, durations, start_time, end_time, list_z
+
+    def insert_space_text(self, word, phone, duration, Z=True):
+        new_phone = []
+        new_duration = []
+        list_sp = ';,!? '
+        word = ' '.join(word)
+        i_w = 0
+        i_p = 0
+
+        while i_w < len(word) and i_p < len(phone):
+            while i_w < len(word) and i_p < len(phone) and word[i_w] == phone[i_p] and phone[i_p] != ' ':
+                new_duration.append(duration[i_p])
+                new_phone.append(phone[i_p])
+                i_w += 1
+                i_p += 1
+            i_w += 1
+            # add space phone
+            if not Z:
+                new_duration.append(0)
+                new_phone.append(' ')
+
+            if i_p < len(phone) and phone[i_p] in list_sp:
+                sub_sp_dur = 0
+                dem = 0
+
+                while phone[i_p] in list_sp:
+                    sub_sp_dur += duration[i_p]
+                    i_p += 1
+                    dem += 1
+                if Z and dem == 1:
+                    if sub_sp_dur * hp.hop_length / hp.sampling_rate > 0.3:
+                        new_phone.append('?')
+                    else:
+                        new_phone.append(' ')
+                elif sub_sp_dur * hp.hop_length / hp.sampling_rate > 0.3:
+                    new_phone.append('?')
+                else:
+                    new_phone.append(',')
+
+                new_duration.append(sub_sp_dur)
+                # add space phone
+                if not Z:
+                    new_duration.append(0)
+                    new_phone.append(' ')
+        while new_phone[-1] == ' ':
+            new_phone = new_phone[:-1]
+            new_duration = new_duration[:-1]
+        if sum(duration) != sum(new_duration) or len(new_phone) != len(new_duration):
+            return None, None
+        return new_phone, new_duration
 
     def remove_outlier(self, values):
         values = np.array(values)
