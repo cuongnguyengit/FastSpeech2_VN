@@ -63,7 +63,7 @@ def get_vocoder(config, device):
         #     ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar")
         # elif speaker == "universal":
         #     ckpt = torch.load("hifigan/generator_universal.pth.tar")
-        ckpt = torch.load(os.path.join('/content/drive/MyDrive/checkpoint/hifigan/UNIVERSAL_V1', 'g03175000'), map_location=device)
+        ckpt = torch.load(os.path.join('/content/drive/MyDrive/checkpoint/hifigan/UNIVERSAL_V1', 'g_03175000'), map_location=device)
         vocoder.load_state_dict(ckpt["generator"])
         vocoder.eval()
         vocoder.remove_weight_norm()
