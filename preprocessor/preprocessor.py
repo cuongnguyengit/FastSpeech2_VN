@@ -332,7 +332,7 @@ class Preprocessor:
                 else:
                     phones.append(',')
             durations.append(int(np.round(
-                e * hp.sampling_rate / hp.hop_length) - np.round(s * hp.sampling_rate / hp.hop_length)))
+                e * self.sampling_rate / self.hop_length) - np.round(s * self.sampling_rate / self.hop_length)))
 
         if flag:
             return None, None, None, None
