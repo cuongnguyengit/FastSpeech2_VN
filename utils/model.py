@@ -55,7 +55,7 @@ def get_vocoder(config, device):
         vocoder.mel2wav.eval()
         vocoder.mel2wav.to(device)
     elif name == "HiFi-GAN":
-        with open("/content/drive/MyDrive/checkpoint/hifigan/config.json", "r") as f:
+        with open("/content/drive/MyDrive/checkpoint/hifigan/UNIVERSAL_V1/config.json", "r") as f:
             config = json.load(f)
         config = hifigan.AttrDict(config)
         vocoder = hifigan.Generator(config)
@@ -63,7 +63,7 @@ def get_vocoder(config, device):
         #     ckpt = torch.load("hifigan/generator_LJSpeech.pth.tar")
         # elif speaker == "universal":
         #     ckpt = torch.load("hifigan/generator_universal.pth.tar")
-        ckpt = torch.load(os.path.join('hifigan', 'g03175000'), map_location=device)
+        ckpt = torch.load(os.path.join('/content/drive/MyDrive/checkpoint/hifigan/UNIVERSAL_V1', 'g03175000'), map_location=device)
         vocoder.load_state_dict(ckpt["generator"])
         vocoder.eval()
         vocoder.remove_weight_norm()
