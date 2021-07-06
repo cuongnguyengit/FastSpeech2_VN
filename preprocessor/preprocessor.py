@@ -372,11 +372,11 @@ class Preprocessor:
                     i_p += 1
                     dem += 1
                 if Z and dem == 1:
-                    if sub_sp_dur * hp.hop_length / hp.sampling_rate > 0.3:
+                    if sub_sp_dur * self.hop_length / self.sampling_rate > 0.3:
                         new_phone.append('?')
                     else:
                         new_phone.append(' ')
-                elif sub_sp_dur * hp.hop_length / hp.sampling_rate > 0.3:
+                elif sub_sp_dur * self.hop_length / self.sampling_rate > 0.3:
                     new_phone.append('?')
                 else:
                     new_phone.append(',')
